@@ -42,4 +42,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/app/*.json
-/lib/firebase_options.dart
+/lib/firebase

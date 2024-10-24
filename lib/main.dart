@@ -1,4 +1,4 @@
-import 'package:expense_app/firebase_options.dart';
+import 'package:expense_app/firebase/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_app/month_widget.dart';
 import 'package:firebase_core/firebase_core.dart';

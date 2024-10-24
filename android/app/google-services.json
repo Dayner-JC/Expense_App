@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "849817401604",
+    "firebase_url": "https://expense-app-a7692-default-rtdb.firebaseio.com",
+    "project_id": "expense-app-a7692",
+    "storage_bucket": "expense-app-a7692.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849817401604:android:ddcadcebdb3bdedcc1b851",
+        "android_client_info": {
+          "package_name": "com.example.e"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBApWw6ZP71YJIqvtSQYG7rnQ5EU6HBtpQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849817401604:android:9921539884dae257c1b851",
+        "android_client_info": {
+          "package_name": "com.example.expense_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBApWw6ZP71YJIqvtSQYG7rnQ5EU6HBtpQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

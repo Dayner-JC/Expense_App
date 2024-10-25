@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_app/category_selector_widget.dart';
+import 'package:expense_app/widgets/category_selector_widget.dart';
+import 'package:expense_app/state/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -181,10 +183,16 @@ class _AddPageState extends State<AddPage> {
       ),
       child: MaterialButton(
         onPressed: () {
+          var user = Provider.of<LoginState>(context, listen: false).currentUser();
           if (value > 0 && category != '') {
-            FirebaseFirestore.instance.collection('expenses').doc().set({
+            FirebaseFirestore.instance
+             .collection('users')
+             .doc(user.uid)
+             .collection('expenses')
+             .doc()
+             .set({
               'category': category,
-              'value': value,
+              'value': value / 100,
               'month': DateTime.now().month,
               'day': DateTime.now().day,
             });

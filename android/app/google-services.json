@@ -13,7 +13,12 @@
           "package_name": "com.example.e"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "849817401604-2kj3dt2valfi8a8bc6j0o34jjd9jc6cg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBApWw6ZP71YJIqvtSQYG7rnQ5EU6HBtpQ"
@@ -21,7 +26,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849817401604-2kj3dt2valfi8a8bc6j0o34jjd9jc6cg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "849817401604-2ht2578ovagoge5bs3nvdhj3mac8lcpd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.expenseApp"
+              }
+            }
+          ]
         }
       }
     },
@@ -32,7 +49,20 @@
           "package_name": "com.example.expense_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "849817401604-9vrmlqchpencmh9djos78pql0eskhae8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.expense_app",
+            "certificate_hash": "5d112df10a41c3235a4ec91ed0dee3632b35106a"
+          }
+        },
+        {
+          "client_id": "849817401604-2kj3dt2valfi8a8bc6j0o34jjd9jc6cg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBApWw6ZP71YJIqvtSQYG7rnQ5EU6HBtpQ"
@@ -40,7 +70,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849817401604-2kj3dt2valfi8a8bc6j0o34jjd9jc6cg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "849817401604-2ht2578ovagoge5bs3nvdhj3mac8lcpd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.expenseApp"
+              }
+            }
+          ]
         }
       }
     }

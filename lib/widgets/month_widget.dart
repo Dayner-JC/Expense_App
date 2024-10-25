@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_app/graph_widget.dart';
+import 'package:expense_app/widgets/graph_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -12,9 +12,10 @@ class MonthWidget extends StatefulWidget {
   MonthWidget({
     super.key,
     required this.documents,
+    days,
   })  : total = documents.map((doc) => doc['value']).fold(0.0, (a, b) => a + b),
         perDay = List.generate(
-          30,
+          days,
           (int index) {
             return documents
                 .where((doc) => doc['day'] == (index + 1))

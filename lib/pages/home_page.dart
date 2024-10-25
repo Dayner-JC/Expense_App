@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_app/month_widget.dart';
+import 'package:expense_app/state/login_state.dart';
+import 'package:expense_app/widgets/month_widget.dart';
+import 'package:expense_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,17 +15,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late PageController _controller;
-  int currentPage = 9;
+  int currentPage = DateTime.now().month - 1;
   late Stream<QuerySnapshot> _query;
 
   @override
   void initState() {
     super.initState();
-
-    _query = FirebaseFirestore.instance
-        .collection('expenses')
-        .where('month', isEqualTo: currentPage + 1)
-        .snapshots();
 
     _controller = PageController(
       initialPage: currentPage,
@@ -30,39 +28,57 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _bottomAction(IconData icon) {
+  Widget _bottomAction(icon, callback) {
     return InkWell(
-      child: Icon(icon),
-      onTap: () {},
+      onTap: callback,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(icon),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        notchMargin: 8.0,
-        shape: const CircularNotchedRectangle(),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _bottomAction(FontAwesomeIcons.clockRotateLeft),
-            _bottomAction(FontAwesomeIcons.chartPie),
-            const SizedBox(width: 48.0),
-            _bottomAction(FontAwesomeIcons.wallet),
-            _bottomAction(Icons.settings),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).pushNamed("/add");
-        },
-      ),
-      body: _body(),
+    return Consumer(
+      builder: (BuildContext context, LoginState state, Widget? child) {
+        var user = Provider.of<LoginState>(context).currentUser();
+        _query = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('expenses')
+            .where('month', isEqualTo: currentPage + 1)
+            .snapshots();
+
+        return Scaffold(
+          bottomNavigationBar: BottomAppBar(
+            notchMargin: 8.0,
+            shape: const CircularNotchedRectangle(),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _bottomAction(FontAwesomeIcons.clockRotateLeft, () {}),
+                _bottomAction(FontAwesomeIcons.chartPie, () {}),
+                const SizedBox(width: 48.0),
+                _bottomAction(FontAwesomeIcons.wallet, () {}),
+                _bottomAction(Icons.settings, () {
+                  Provider.of<LoginState>(context, listen: false).logout();
+                }),
+              ],
+            ),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).pushNamed("/add");
+            },
+          ),
+          body: _body(),
+        );
+      },
     );
   }
 
@@ -76,10 +92,10 @@ class _HomePageState extends State<HomePage> {
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> data) {
               if (data.hasData) {
                 return MonthWidget(
+                  days: daysInMonth(currentPage + 1),
                   documents: data.data!.docs,
                 );
               }
-
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -130,8 +146,12 @@ class _HomePageState extends State<HomePage> {
         onPageChanged: (newPage) {
           setState(
             () {
+              var user =
+                  Provider.of<LoginState>(context, listen: false).currentUser();
               currentPage = newPage;
               _query = FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
                   .collection('expenses')
                   .where('month', isEqualTo: currentPage + 1)
                   .snapshots();

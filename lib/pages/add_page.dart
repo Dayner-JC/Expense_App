@@ -6,52 +6,100 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class AddPage extends StatefulWidget {
-  const AddPage({super.key});
+  final Rect buttonRect;
+
+  const AddPage({super.key, required this.buttonRect});
 
   @override
   State<AddPage> createState() => _AddPageState();
 }
 
-class _AddPageState extends State<AddPage> {
+class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation _buttonAnimation;
+  late Animation _pageAnimation;
+
   late String category;
   int value = 0;
 
   @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+
+    _buttonAnimation = Tween<double>(begin: 0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
+    );
+
+    _pageAnimation = Tween<double>(begin: -1, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
+    );
+
+    _controller.addListener(() {
+      setState(() {});
+    });
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed) {
+        Navigator.of(context).pop();
+      }
+    });
+
+    _controller.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        title: const Text(
-          'Category',
-          style: TextStyle(
-            color: Colors.grey,
+    var height = MediaQuery.of(context).size.height;
+    return Stack(
+      children: [
+        Transform.translate(
+          offset: Offset(0, height * (1 - _pageAnimation.value)),
+          child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              title: const Text(
+                'Category',
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    _controller.reverse();
+                  },
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            body: _body(),
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(
-              Icons.close,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
-      body: _body(),
+        _submit(),
+      ],
     );
   }
 
   Widget _body() {
+    var height = MediaQuery.of(context).size.height;
     return Column(
       children: [
         _categorySelector(),
         _currentValue(),
         _numPad(),
-        _submit(),
+        SizedBox(
+          height: height - widget.buttonRect.top,
+        )
       ],
     );
   }
@@ -175,44 +223,72 @@ class _AddPageState extends State<AddPage> {
   }
 
   Widget _submit() {
-    return Container(
-      height: 50.0,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.blueAccent,
-      ),
-      child: MaterialButton(
-        onPressed: () {
-          var user = Provider.of<LoginState>(context, listen: false).currentUser();
-          if (value > 0 && category != '') {
-            FirebaseFirestore.instance
-             .collection('users')
-             .doc(user.uid)
-             .collection('expenses')
-             .doc()
-             .set({
-              'category': category,
-              'value': value / 100,
-              'month': DateTime.now().month,
-              'day': DateTime.now().day,
-            });
-            Navigator.of(context).pop();
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Select value and category"),
-              ),
-            );
-          }
-        },
-        child: const Text(
-          'Add expense',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
+    if (_controller.value < 1) {
+      var buttonWidth = widget.buttonRect.right - widget.buttonRect.left;
+      var width = MediaQuery.of(context).size.width;
+      return Positioned(
+        top: widget.buttonRect.top,
+        left: widget.buttonRect.left * (1 - _buttonAnimation.value),
+        right: (width - widget.buttonRect.right) * (1 - _buttonAnimation.value),
+        bottom: (MediaQuery.of(context).size.height -  widget.buttonRect.bottom) * (1 - _buttonAnimation.value),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(
+              buttonWidth * (1 - _buttonAnimation.value),
+            ),
+            color: Colors.blueAccent,
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Positioned(
+        top: widget.buttonRect.top,
+        bottom: 0.0,
+        left: 0.0,
+        right: 0.0,
+        child: Builder(
+          builder: (BuildContext context) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.blueAccent,
+              ),
+              child: MaterialButton(
+                onPressed: () {
+                  var user = Provider.of<LoginState>(context, listen: false)
+                      .currentUser();
+                  if (value > 0 && category != '') {
+                    FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.uid)
+                        .collection('expenses')
+                        .doc()
+                        .set({
+                      'category': category,
+                      'value': value / 100,
+                      'month': DateTime.now().month,
+                      'day': DateTime.now().day,
+                    });
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Select value and category"),
+                      ),
+                    );
+                  }
+                },
+                child: const Text(
+                  'Add expense',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 }

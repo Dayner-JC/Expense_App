@@ -3,16 +3,23 @@ import 'package:expense_app/widgets/graph_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+enum GraphType {
+  LINES,
+  PIE,
+}
+
 class MonthWidget extends StatefulWidget {
   final List<DocumentSnapshot> documents;
   final double total;
   final List<double> perDay;
   final Map<String, double> categories;
+  final GraphType graphType;
 
   MonthWidget({
     super.key,
     required this.documents,
     days,
+    required this.graphType,
   })  : total = documents.map((doc) => doc['value']).fold(0.0, (a, b) => a + b),
         perDay = List.generate(
           days,
@@ -75,12 +82,23 @@ class _MonthWidgetState extends State<MonthWidget> {
   }
 
   Widget _graph() {
-    return SizedBox(
-      height: 220,
-      child: GraphWidget(
-        data: widget.perDay,
-      ),
-    );
+    if (widget.graphType == GraphType.LINES) {
+      return SizedBox(
+        height: 220,
+        child: LinesGraphWidget(
+          data: widget.perDay,
+        ),
+      );
+    } else {
+      var perCategories = widget.categories.keys
+          .map((name) => widget.categories[name]! / widget.total).toList();
+      return SizedBox(
+        height: 220,
+        child: PieGraphWidget(
+          data: perCategories,
+        ),
+      );
+    }
   }
 
   Widget _list() {
@@ -90,7 +108,8 @@ class _MonthWidgetState extends State<MonthWidget> {
         itemBuilder: (BuildContext context, int index) {
           var key = widget.categories.keys.elementAt(index);
           var data = widget.categories[key];
-          return _item(FontAwesomeIcons.cartShopping, key, 100 * data! ~/ widget.total, data);
+          return _item(FontAwesomeIcons.cartShopping, key,
+              100 * data! ~/ widget.total, data);
         },
         separatorBuilder: (BuildContext context, int index) {
           return Container(

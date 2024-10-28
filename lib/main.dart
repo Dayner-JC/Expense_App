@@ -1,4 +1,5 @@
 import 'package:expense_app/firebase/firebase_options.dart';
+import 'package:expense_app/pages/datails_page.dart';
 import 'package:expense_app/state/login_state.dart';
 import 'package:expense_app/pages/home_page.dart';
 import 'package:expense_app/pages/login_page.dart';
@@ -29,19 +30,19 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        
-        // onGenerateRoute: (settings) {
-        //   Rect buttonRect = settings.arguments as Rect;
-        //   if (settings.name == '/add') {
-        //     return AddPageTransition(
-        //       background: ,
-        //       page: AddPage(
-        //         buttonRect: buttonRect,
-        //       ),
-        //     );
-        //   }
-        //   return null;
-        // },
+        onGenerateRoute: (settings) {
+          if (settings.name == '/details') {
+            DetailsParams params = settings.arguments as DetailsParams;
+            return MaterialPageRoute(
+              builder: (BuildContext context) {
+                return DetailsPage(
+                  params: params,
+                );
+              },
+            );
+          }
+          return null;
+        },
         routes: {
           '/': (BuildContext context) {
             var state = Provider.of<LoginState>(context);

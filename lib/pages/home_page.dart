@@ -125,7 +125,8 @@ class _HomePageState extends State<HomePage> {
                 return MonthWidget(
                   days: daysInMonth(currentPage + 1),
                   documents: data.data!.docs, 
-                  graphType: currentType,
+                  graphType: currentType, 
+                  month: currentPage,
                 );
               }
               return const Center(

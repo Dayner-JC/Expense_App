@@ -60,6 +60,7 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
         Transform.translate(
           offset: Offset(0, height * (1 - _pageAnimation.value)),
           child: Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: Colors.transparent,
@@ -230,7 +231,9 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
         top: widget.buttonRect.top,
         left: widget.buttonRect.left * (1 - _buttonAnimation.value),
         right: (width - widget.buttonRect.right) * (1 - _buttonAnimation.value),
-        bottom: (MediaQuery.of(context).size.height -  widget.buttonRect.bottom) * (1 - _buttonAnimation.value),
+        bottom:
+            (MediaQuery.of(context).size.height - widget.buttonRect.bottom) *
+                (1 - _buttonAnimation.value),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(
@@ -254,6 +257,7 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
               ),
               child: MaterialButton(
                 onPressed: () {
+                  var today = DateTime.now();
                   var user = Provider.of<LoginState>(context, listen: false)
                       .currentUser();
                   if (value > 0 && category != '') {
@@ -264,15 +268,27 @@ class _AddPageState extends State<AddPage> with SingleTickerProviderStateMixin {
                         .doc()
                         .set({
                       'category': category,
-                      'value': value / 100,
-                      'month': DateTime.now().month,
-                      'day': DateTime.now().day,
+                      'value': value / 100.0,
+                      'month': today.month,
+                      'day': today.day,
+                      'year': today.year,
                     });
-                    Navigator.of(context).pop();
+                    _controller.reverse();
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Select value and category"),
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => AlertDialog(
+                        content:
+                            const Text('Category and value cannot be empty'),
+                        actions: [
+                          TextButton(
+                            child: const Text('Ok'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
                       ),
                     );
                   }

@@ -58,6 +58,7 @@ class _HomePageState extends State<HomePage> {
             .snapshots();
 
         return Scaffold(
+          backgroundColor: Colors.white,
           bottomNavigationBar: BottomAppBar(
             notchMargin: 8.0,
             shape: const CircularNotchedRectangle(),
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                 buttonRect = RectGetter.getRectFromKey(globalKey)!;
 
                 var page = AddPageTransition(
-                  background: widget,
+                  
                   page: AddPage(
                     buttonRect: buttonRect,
                   ),
@@ -121,16 +122,34 @@ class _HomePageState extends State<HomePage> {
           StreamBuilder<QuerySnapshot>(
             stream: _query,
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> data) {
-              if (data.hasData) {
-                return MonthWidget(
-                  days: daysInMonth(currentPage + 1),
-                  documents: data.data!.docs, 
-                  graphType: currentType, 
-                  month: currentPage,
-                );
+              if (data.connectionState == ConnectionState.active) {
+                if (data.data!.docs.isNotEmpty) {
+                  return MonthWidget(
+                    days: daysInMonth(currentPage + 1),
+                    documents: data.data!.docs,
+                    graphType: currentType,
+                    month: currentPage,
+                  );
+                } else {
+                  return Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/no_data.png'),
+                        const SizedBox(height: 20.0),
+                        Text(
+                          'No expenses have been recorded this month.',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )
+                      ],
+                    ),
+                  );
+                }
               }
-              return const Center(
-                child: CircularProgressIndicator(),
+              return const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             },
           ),

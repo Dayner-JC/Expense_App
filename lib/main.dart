@@ -1,4 +1,6 @@
+import 'package:expense_app/add_page_transition.dart';
 import 'package:expense_app/firebase/firebase_options.dart';
+import 'package:expense_app/pages/add_page.dart';
 import 'package:expense_app/pages/datails_page.dart';
 import 'package:expense_app/state/login_state.dart';
 import 'package:expense_app/pages/home_page.dart';
@@ -39,6 +41,13 @@ class MyApp extends StatelessWidget {
                   params: params,
                 );
               },
+            );
+          } else if (settings.name == '/add') {
+            Rect buttonRect = settings.arguments as Rect;
+            return AddPageTransition(
+              page: AddPage(
+                buttonRect: buttonRect,
+              ),
             );
           }
           return null;
